@@ -1,0 +1,102 @@
+bsonobjbuilder.h
+
+class BSONObjBuilder
+{
+public:
+    //构造函数，可以指定buf size
+    BSONObjBuilder(int initsize=512)
+
+    //将BSONObj的所有字段append到buf中
+    BSONObjBuilder& appendElements(BSONObj x);
+
+    //将BSONObj的所有字段append到buf中，但是过滤掉buf中已经存在的字段
+    BSONObjBuilder& appendElementsUnique( BSONObj x );
+
+    //将BSONElement append到buf中
+    BSONObjBuilder& append( const BSONElement& e)
+
+    //将BSONElement append到buf中，但是重新指定元素名称
+    BSONObjBuilder& appendAs(const BSONElement& e,const StringData& fieldName)
+
+    //将一个子对象当作一个元素append到buf中(bson语义支持object type)
+    BSONObjBuilder& append(const StringData& fieldName, BSONObj subObj)
+
+    //将一个子对象当作一个元素append到buf中(bson语义支持object type)，参数为子对象的原始数据
+    BSONObjBuilder& appendObject(const StringData& fieldName,const char * objdata , int size = 0 )
+
+    //返回值置入BSONObjBuilder，开始一个子对象。指定子对象的名称，返回的BufBuilder用来填充子对象的数据。
+         /*  BSONObjBuilder b;
+         *  BSONObjBuilder sub (b.subobjStart("fieldName"));
+         *  // use sub
+         *  sub.done()
+         */  // use b and convert to object
+    BufBuilder &subobjStart(const StringData& fieldName)
+
+    //返回值置入BSONArrayBuilder，开始构造一个子数组。指定子数组的名称，返回的BufBuilder用来填充子数组的数据。
+    BufBuilder &subarrayStart(const StringData& fieldName)
+
+    //将一个子对象当作一个元素append到buf中，子对象类型是array
+    BSONObjBuilder& appendArray(const StringData& fieldName,const BSONObj &subObj)
+
+    //将一个array对象当作一个元素append到buf中
+    BSONObjBuilder& append(const StringData& fieldName, BSONArray arr)
+
+    //将基础类型元素append到buf中
+    BSONObjBuilder& append(const StringData& fieldName, /*int n,bool val,unsigned n,long long n,double n*/)
+
+    //将一个string对象转换成数字类型append到buf中，如 "-19.2" 则转为double存储， "12"则转为int存储, "1234567809"则转为long long存储
+    bool appendAsNumber( const StringData& fieldName , const string& data )
+
+    //将字符串类型元素append到buf中
+    BSONObjBuilder& append(const StringData& fieldName, const char *str)
+
+    //将非基础类型元素append到buf中
+    BSONObjBuilder& appendTimeT(const StringData& fieldName, time_t dt)
+    BSONObjBuilder& appendDate(const StringData& fieldName, Date_t dt)
+    BSONObjBuilder& append(const StringData& fieldName, Date_t dt)
+    BSONObjBuilder& appendRegex(const StringData& fieldName,const StringData& regex, const StringData& options = "")
+    BSONObjBuilder& appendCode(const StringData& fieldName,const StringData& code)
+    BSONObjBuilder& appendSymbol(const StringData& fieldName,const StringData& symbol)
+    BSONObjBuilder& appendNull( const StringData& fieldName )
+    BSONObjBuilder& appendMinKey( const StringData& fieldName )
+    BSONObjBuilder& appendMaxKey( const StringData& fieldName )
+    BSONObjBuilder& appendTimestamp( const StringData& fieldName )
+    BSONObjBuilder& appendTimestamp( const StringData& fieldName , unsigned long long val )
+    BSONObjBuilder& appendBinData( const StringData& fieldName, int len,BinDataType type, const unsigned char *data )
+
+    //将容器类型元素append到buf中
+    template < class T > BSONObjBuilder& append( const StringData& fieldName,const vector< T >& vals )
+    template < class T > BSONObjBuilder& append( const StringData& fieldName,const list< T >& vals )
+    template < class T > BSONObjBuilder& append( const StringData& fieldName, const set< T >& vals )
+
+    //Append a BSON Object ID，param fieldName Field name, e.g., "_id"
+    BSONObjBuilder& append( const StringData& fieldName, OID oid )
+
+    //为对象生成一个_id字段，这个字段最好是对象的第一个元素
+    BSONObjBuilder& genOID()
+
+    //获得BSONOBJ，BSONObj析构buf才释放。适合用来获取可在对象间传递的BSONObj
+    BSONObj obj()
+
+    //获得BSONOBJ，BSONObjBuilder析构buf就释放。适合用来在函数内构造BSONObj的子对象
+    BSONObj done()
+
+    //private函数。停止对buf的访问，并在buf尾写入一字节的结束标志，然后返回buf
+    char* _done()
+
+private：
+    BufBuilder &_b
+    BufBuilder _buf;
+}
+
+class BSONArrayBuilder
+{
+public:
+    //返回值置入BSONObjBuilder/BSONArrayBuilder用来开始构造一个新对象/新数组
+    BufBuilder &subobjStart() { return _b.subobjStart( num() ); }
+    BufBuilder &subarrayStart() { return _b.subarrayStart( num() );
+
+private:
+    //数组的builder
+    BSONObjBuilder _b
+}
