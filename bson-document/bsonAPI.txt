@@ -1,4 +1,6 @@
-bsonobjbuilder.h
+//////////////////////////////
+///bsonobjbuilder.h
+//////////////////////////////
 
 class BSONObjBuilder
 {
@@ -102,11 +104,12 @@ private:
 }
 
 
-
-bsonobjiterator.h
+//////////////////////////////
+///bsonobjiterator.h
+//////////////////////////////
 
                   [--------BSONElement-----][--------BSONElement-----][-------BSONElement------][------BSONElement-------]
-                  ------------iter++--------------------iter++--------------- ---iter++------------------iter++-----------
+                  ------------iter++--------------------iter++-------------------iter++------------------iter++-----------
 BufBuilder(char*):[BSONType,fieldName,value][BSONType,fieldName,value][BSONType,fieldName,value][BSONType,fieldName,value]
 
 class BSONObjIterator
