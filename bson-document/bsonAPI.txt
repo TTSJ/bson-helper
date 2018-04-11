@@ -100,3 +100,31 @@ private:
     //数组的builder
     BSONObjBuilder _b
 }
+
+
+
+bsonobjiterator.h
+
+                  [--------BSONElement-----][--------BSONElement-----][-------BSONElement------][------BSONElement-------]
+                  ------------iter++--------------------iter++--------------- ---iter++------------------iter++-----------
+BufBuilder(char*):[BSONType,fieldName,value][BSONType,fieldName,value][BSONType,fieldName,value][BSONType,fieldName,value]
+
+class BSONObjIterator
+{
+//buf是一连串排列的元素，每个元素的第一个字节会标识数据类型，这样就可以计算出每个元素在buf中的长度
+//从头开始计算第一个元素的地址，用这个地址构造BSONElement对象去管理这个元素。然后标识下一个元素的地址，以此完成迭代
+public:
+    //迭代器的构造参数是buf，表现形式为一个包含buf的bson对象或者指向buf的指针
+    BSONObjIterator(const BSONObj& jso)
+    BSONObjIterator( const char * start , const char * end )
+
+    //判断后面是否还有元素
+    bool more()
+
+    //返回一个元素，迭代器指向下一个元素的起始地址
+    BSONElement next()
+
+private:
+    //指向buf的首地址
+    const char* _pos;
+}
